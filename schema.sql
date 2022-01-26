@@ -1,0 +1,41 @@
+CREATE DATABASE Group5DB;
+
+CREATE TABLE Initial_Order_Table (
+    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Date DATE(YYYY-MM-DD) NOT NULL,
+    Time TIME(hh:mm:ss) NOT NULL,
+    Outlet VARCHAR(255),
+    Item price FLOAT(53),
+    Total price FLOAT(53),
+    Payment Method VARCHAR(255)
+);
+
+CREATE TABLE Item (
+    Item ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Item Name VARCHAR(255) NOT NULL,
+    Price FLOAT(53) NOT NULL
+);
+
+CREATE TABLE Order (
+    Order ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Date DATE(YYYY-MM-DD) NOT NULL,
+    Time TIME (hh:mm:ss) NOT NULL,
+    Branch ID INT(255) NOT NULL,
+    Total_price FLOAT(53) NOT NULL
+);
+
+CREATE TABLE Branch (
+    Branch ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Branch VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE Items Ordered (
+    Order ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Item ID INT(255) NOT NULL,
+    Quantity INT(20) NOT NULL
+);
+
+CREATE TABLE Customer (
+    Customer ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Full Name VARCHAR(255) NOT NULL
+);
