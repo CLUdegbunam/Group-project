@@ -5,16 +5,15 @@ services:
     container_name: pg_container
     restart: always
     environment:
-      POSTGRES_USER: pguser
-      POSTGRES_ROOT_PASSWORD: "${mysql_pass}"
-      POSTGRES_DB: pgdb
+      POSTGRES_USER: "${pg_user}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
     ports:
       - 5432:5432
     volumes:
       - ./pg_db:/var/lib/postgresql
   adminer:
     image: adminer
-    container_name: adminer_container
+    container_name: adminer_containerr
     restart: always
     ports:
       - 8081:8080
