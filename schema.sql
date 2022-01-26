@@ -1,41 +1,43 @@
 CREATE DATABASE Group5DB;
 
 CREATE TABLE Initial_Order_Table (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    ID INT NOT NULL SMALLSERIAL PRIMARY KEY,
     Date DATE(YYYY-MM-DD) NOT NULL,
     Time TIME(hh:mm:ss) NOT NULL,
-    Outlet VARCHAR(255),
-    Item price FLOAT(53),
-    Total price FLOAT(53),
-    Payment Method VARCHAR(255)
+    Branch VARCHAR(255),
+    Item_price FLOAT(53),
+    Total_price FLOAT(53),
+    Payment_Method VARCHAR(255)
 );
 
 CREATE TABLE Item (
-    Item ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    Item Name VARCHAR(255) NOT NULL,
+    Item_ID INT NOT NULL SMALLSERIAL PRIMARY KEY,
+    Item_Name VARCHAR(255) NOT NULL,
     Price FLOAT(53) NOT NULL
 );
 
 CREATE TABLE Order (
-    Order ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Order_ID INT NOT NULL,
     Date DATE(YYYY-MM-DD) NOT NULL,
     Time TIME (hh:mm:ss) NOT NULL,
-    Branch ID INT(255) NOT NULL,
-    Total_price FLOAT(53) NOT NULL
+    Branch_ID INT(255) NOT NULL,
+    Total_price FLOAT(53) NOT NULL,
+    PRIMARY KEY (ID)
 );
 
 CREATE TABLE Branch (
-    Branch ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    Branch_ID INT NOT NULL SMALLSERIAL PRIMARY KEY,
     Branch VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Items Ordered (
-    Order ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    Item ID INT(255) NOT NULL,
-    Quantity INT(20) NOT NULL
+CREATE TABLE Items_Ordered (
+    Order_ID INT NOT NULL,
+    Item_ID INT(255) NOT NULL,
+    Quantity INT(20) NOT NULL,
+    PRIMARY KEY (ID)
 );
 
 CREATE TABLE Customer (
-    Customer ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    Full Name VARCHAR(255) NOT NULL
+    Customer_ID INT NOT NULL Smallcereal PRIMARY KEY,
+    Full_Name VARCHAR(255) NOT NULL
 );
