@@ -22,7 +22,7 @@ CREATE TABLE Order (
     Time TIME (hh:mm:ss) NOT NULL,
     Branch_ID INT(255) NOT NULL,
     Total_price FLOAT(53) NOT NULL,
-    PRIMARY KEY (ID)
+    PRIMARY KEY (Order_ID, Branch_ID)
 );
 
 CREATE TABLE Branch (
@@ -34,7 +34,7 @@ CREATE TABLE Items_Ordered (
     Order_ID INT NOT NULL,
     Item_ID INT(255) NOT NULL,
     Quantity INT(20) NOT NULL,
-    PRIMARY KEY (ID)
+    PRIMARY KEY (Order_ID, Item_ID)
 );
 
 CREATE TABLE Customer (
