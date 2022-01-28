@@ -60,10 +60,15 @@ def run_db(sql):
         connection.autocommit=True
         cursor = connection.cursor()
         cursor.execute(sql)
+        rows = cursor.fetchall()
+
+
 
         cursor.close()
     finally:
         connection.close()
+    
+    return rows
 
 
 def load_id():
@@ -115,7 +120,7 @@ def display_orders():
     FROM Branches b
     INNER JOIN Orders o ON o.Branch_ID = b.Branch_ID
     """
-    run_db(sql)
+    print(run_db(sql))
 
 option = input("""
 Enter '1' to create an All_Orders database,
