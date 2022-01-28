@@ -1,41 +1,55 @@
-CREATE DATABASE Group5DB;
-
-CREATE TABLE Initial_Order_Table (
-    ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    Date DATE(YYYY-MM-DD) NOT NULL,
-    Time TIME(hh:mm:ss) NOT NULL,
-    Outlet VARCHAR(255),
-    Item price FLOAT(53),
-    Total price FLOAT(53),
-    Payment Method VARCHAR(255)
-);
+CREATE DATABASE Cafe_Orders;
 
 CREATE TABLE Item (
-    Item ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    Item Name VARCHAR(255) NOT NULL,
-    Price FLOAT(53) NOT NULL
+    Item_ID SMALLSERIAL PRIMARY KEY,
+    Item_Name VARCHAR(255) NOT NULL,
+    Price FLOAT(2) NOT NULL
 );
 
-CREATE TABLE Order (
-    Order ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    Date DATE(YYYY-MM-DD) NOT NULL,
-    Time TIME (hh:mm:ss) NOT NULL,
-    Branch ID INT(255) NOT NULL,
-    Total_price FLOAT(53) NOT NULL
+CREATE TABLE Orders(
+    Order_ID SMALLSERIAL,
+    Date_Time timestamp NOT NULL,
+    Branch_ID INT NOT NULL,
+    Total_price FLOAT(2) NOT NULL
+    PRIMARY KEY (Order_ID, Branch_ID)
 );
 
-CREATE TABLE Branch (
-    Branch ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+CREATE TABLE Branches (
+    Branch_ID SMALLSERIAL PRIMARY KEY,
     Branch VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE Items Ordered (
-    Order ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    Item ID INT(255) NOT NULL,
-    Quantity INT(20) NOT NULL
+CREATE TABLE Items_Ordered (
+    Order_ID INT NOT NULL,
+    Item_ID INT NOT NULL,
+    Quantity INT NOT NULL,
+    PRIMARY KEY (Order_ID, Item_ID)
 );
+    
+INSERT INTO Item (
+    Item_ID, Item_Name, Price
+    )
+    VALUES 
+    (DEFAULT, 'Regular Flavoured iced latte - Hazelnut', 2.75),
+    (DEFAULT, 'Regular Flavoured iced latte - Caramel', 2.75),
+    (DEFAULT, 'Regular Flavoured iced latte - Vanilla', 2.75),
+    (DEFAULT, 'Large Flavoured iced latte - Hazelnut', 3.25),
+    (DEFAULT, 'Large Flavoured iced latte - Caramel', 3.25),
+    (DEFAULT, 'Large Flavoured iced latte - Vanilla', 3.25),
+    (DEFAULT, 'Large Flat white', 2.45),
+    (DEFAULT, 'Regular Flavoured latte - Hazelnut', 2.55),
+    (DEFAULT, 'Regular Flavoured latte - Caramel', 2.55),
+    (DEFAULT, 'Regular Flavoured latte - Vanilla', 2.55), 
+    (DEFAULT, 'Regular Latte', 2.15),
+    (DEFAULT, 'Large Flavoured latte - Hazelnut', 2.85),
+    (DEFAULT, 'Large Flavoured latte - Caramel', 2.85),
+    (DEFAULT, 'Large Flavoured latte - Vanilla', 2.85),
+    (DEFAULT, 'Regular Flat white', 2.15),
+    (DEFAULT, 'Large Latte', 2.45)
 
-CREATE TABLE Customer (
-    Customer ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    Full Name VARCHAR(255) NOT NULL
-);
+INSERT INTO Branches(
+    Branch_ID, Branch
+    )
+    VALUES
+    (DEFAULT, 'Chesterfield'),
+    (DEFAULT, 'Kensington')
