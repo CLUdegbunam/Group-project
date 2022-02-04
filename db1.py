@@ -1,3 +1,4 @@
+# TODO - there are no table constraints on the Items_orders? needs to be a composite key
 def create_tables():
     sql = """  
     CREATE TABLE IF NOT EXISTS Items (
@@ -27,9 +28,12 @@ def create_tables():
     """
     return sql
 
-
+# TODO -  This is not a great way to get the data into it. so much side affects which is bad
+# Consider using paramters, so you can test this function.
 def insert_column_values():    
+    #TODO -  Why have you done your import here? 
     from orders_test import products123, price_for_product, run_db, Branchess, current_branches, items
+    # TODO - consider putting this into its own function where you pass the products in via the parameter
     for prices, item in enumerate(products123):
         price = price_for_product[prices]
         price = float(price)
@@ -44,7 +48,7 @@ def insert_column_values():
             """
             run_db(sql)
             items.append(item)
-    
+    # TODO - consider putting this into its own function where you pass the products in via the parameter
     for Branch in Branchess:
         if Branch not in current_branches:    
             sql = f"""
