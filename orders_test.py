@@ -3,7 +3,7 @@ import os
 import psycopg2
 from db1 import create_tables, insert_column_values_products, insert_column_values_branches
 from dotenv import load_dotenv
-
+test = []
 
 order_id = 0
 
@@ -82,78 +82,83 @@ def load_ids():
 load_ids()
 
 filename = "chesterfield_25-08-2021_09-00-00.csv"
-with open(f"{filename}", 'r') as cafe_orders:
-    reader = csv.reader(cafe_orders)
+def load_csv_file(filename):
+    with open(f"{filename}", 'r') as cafe_orders:
+        reader = csv.reader(cafe_orders)
 
-    for line in reader:
-        final_products = []
-        test_for_products = []
-        products = []
+        for line in reader:
+            final_products = []
+            test_for_products = []
+            products = []
 
-        test_for_products = line[3]
-        if ', ' in test_for_products:
-            test_for_products = line[3].split(', ')
+            test_for_products = line[3]
+            if ', ' in test_for_products:
+                test_for_products = line[3].split(', ')
 
-        x = 0
-        for product in test_for_products:
-            pricess = []
-            if '- ' in product:
-                x =+ 1
-                products = product.rsplit(' - ', 1)
-                pricess.append(product.split(' - ', -2))
-                products.remove(products[-1])
+            x = 0
+            for product in test_for_products:
+                pricess = []
+                if '- ' in product:
+                    x =+ 1
+                    products = product.rsplit(' - ', 1)
+                    pricess.append(product.split(' - ', -2))
+                    products.remove(products[-1])
 
-                if products[0] not in products123:
-                    products123.append(products[0])
-                    price_for_product.append(pricess[0][-1])
+                    if products[0] not in products123:
+                        products123.append(products[0])
+                        price_for_product.append(pricess[0][-1])
 
-                final_products.append(products[0])
+                    final_products.append(products[0])
 
-        if x == 0:
-            if '- ' in test_for_products:
-                products = test_for_products.rsplit(' - ', 1)
-                pricess.append(products[1])
-                products.remove(products[-1])
+            if x == 0:
+                if '- ' in test_for_products:
+                    products = test_for_products.rsplit(' - ', 1)
+                    pricess.append(products[1])
+                    products.remove(products[-1])
 
-                if products[0] not in products123:
-                    products123.append(products[0])
-                    price_for_product.append(pricess[0])
+                    if products[0] not in products123:
+                        products123.append(products[0])
+                        price_for_product.append(pricess[0])
 
-                final_products.append(products[0])
+                    final_products.append(products[0])
 
-        if line[1] not in Branchess:
-            Branchess.append(line[1])
-        
-        unique_orders.append({"Date_Time" : line[0], "Branch" : Branchess.index(line[1])+1, "Product_Name" : final_products, "Total_Price" : line[4]})
+            if line[1] not in Branchess:
+                Branchess.append(line[1])
+            
+            unique_orders.append({"Date_Time" : line[0], "Branch" : Branchess.index(line[1])+1, "Product_Name" : final_products, "Total_Price" : line[4]})
+load_csv_file(filename)
 
-for i in unique_orders:
-    indexes = []
-    for y in i["Product_Name"]:
-        indexes.append(products123.index(y)+1)
-    each_order_products.append(indexes)
-    
-for i in each_order_products:   
-    list = []
-    for y in i:
-        x = 0
-        quantity = 0
-        temp_number = y
+def products_ordered_seperated():
+    for i in unique_orders:
+        indexes = []
+        for y in i["Product_Name"]:
+            indexes.append(products123.index(y)+1)
+        each_order_products.append(indexes)
+products_ordered_seperated()
+
+def calculate_quantities():    
+    for i in each_order_products:   
+        list = []
         for y in i:
-            if temp_number == i[x]:
-                quantity += 1
-            x += 1
-        list.append(quantity)     
-    quantities.append(list)
+            x = 0
+            quantity = 0
+            temp_number = y
+            for y in i:
+                if temp_number == i[x]:
+                    quantity += 1
+                x += 1
+            list.append(quantity)     
+        quantities.append(list)
 
-for i, y in enumerate(each_order_products):
-    orders12345 = []
-    z = quantities[i]
-    for a, b in enumerate(z):
-        c = y[a]
-        orders12345.append({"Product_id" : c, "quantity" : b})
+    for i, y in enumerate(each_order_products):
+        orders12345 = []
+        z = quantities[i]
+        for a, b in enumerate(z):
+            c = y[a]
+            orders12345.append({"Product_id" : c, "quantity" : b})
 
-    item_ids_with_quantity.append([[i for n, i in enumerate(orders12345) if i not in orders12345[n + 1:]]])
-
+        item_ids_with_quantity.append([[i for n, i in enumerate(orders12345) if i not in orders12345[n + 1:]]])
+calculate_quantities()
 
 def update_db():
     orderID = order_id + 1
@@ -164,8 +169,7 @@ def update_db():
         INSERT INTO Orders (
         Order_ID, Date_Time, Branch_ID, Total_Price)
         VALUES ({orderID}, '{i['Date_Time']}',
-        {i["Branch"]}, {i["Total_Price"]})
-        """
+        {i["Branch"]}, {i["Total_Price"]})"""
         run_db(sql)
         orderID += 1
 
@@ -176,8 +180,7 @@ def update_db():
             INSERT INTO Products_Ordered (
             Order_ID, Product_ID, Quantity)
             VALUES ({orderID}, {y["Product_id"]},
-            {y["quantity"]})
-            """
+            {y["quantity"]})"""
             run_db(sql)
         orderID += 1
 
