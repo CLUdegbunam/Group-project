@@ -39,43 +39,29 @@ def run_db(sql):
         connection.autocommit=True
         cursor = connection.cursor()
         cursor.execute(sql)
-
-        cursor.close()
-    finally:
-        connection.close()
-    
-
-def run_db_with_return(sql):
-    try:
-        connection = psycopg2.connect(
-            host=host,
-            user=user,
-            password=password,
-            database=database,
-        )
-        connection.autocommit=True
-        cursor = connection.cursor()
-        cursor.execute(sql)
         rows = cursor.fetchall()
-
+        if rows != None:
+            return rows
         cursor.close()
+    
+    except Exception:
+        pass
+
     finally:
         connection.close()
-    
-    return rows
 
 
 def load_ids():
     try:
         sql = "SELECT Branch FROM Branches"
-        a = run_db_with_return(sql)
+        a = run_db(sql)
         for branch in a:
             if branch[0] not in Branchess:
                 Branchess.append(branch[0])
                 current_branches.append(branch[0])
 
         sql = "SELECT Product_Name, Price FROM Products"
-        b = run_db_with_return(sql)
+        b = run_db(sql)
         for item in b:
             if item[0] not in products123:
                 products123.append(item[0])
@@ -85,19 +71,17 @@ def load_ids():
         sql = """SELECT Order_ID FROM Orders
                  ORDER BY Order_ID DESC"""
         global order_id
-        all_ids = run_db_with_return(sql)
+        all_ids = run_db(sql)
         order_id = all_ids[0][0]
         order_id = int(order_id)
 
         return order_id 
-
     except Exception:
         pass
 
 load_ids()
 
 filename = "chesterfield_25-08-2021_09-00-00.csv"
-
 with open(f"{filename}", 'r') as cafe_orders:
     reader = csv.reader(cafe_orders)
 
