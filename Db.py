@@ -10,7 +10,6 @@ user = os.environ.get("PostgreSQL_user")
 password = os.environ.get("PostgreSQL_pass")
 database = os.environ.get("PostgreSQL_db")
 
-# TODO -  what is this method for? 
 def config(filename='dotenv', section='postgresql'):
     # create a parser
     parser = ConfigParser()
@@ -32,7 +31,6 @@ def connect_db():
     """ Connect to the PostgreSQL database server """
     conn = None
     try:
-        # TODO - If you dont use it delete it!
         # read connection parameters
         params = config()
 
@@ -60,7 +58,6 @@ def connect_db():
             conn.close()
             print('Database connection closed.')
 
-# TODO - what happens if the database is already created? (i assume the exception is caught)
 def create_db():
     create_table = "CREATE DATABASE All_Orders"
     connect_db(create_table)

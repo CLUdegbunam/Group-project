@@ -3,24 +3,23 @@ import os
 import psycopg2
 from dotenv import load_dotenv
 
-# TODO - better naming of variables
+
 cafe50___25_08_2021___orders = []
-# TODO - hard coded the file name! maybe this should be a method
+
 with open("chesterfield_25-08-2021_09-00-00.csv", 'r') as chesterfield_cafe_orders:
-    # TODO - You could use a dict reader?
     reader = csv.reader(chesterfield_cafe_orders)
 
     for line in reader:
         cafe50___25_08_2021___orders.append({"Date and Time" : line[0], "Location" : line[1], "Products and Prices" : line[3], "Total Price" : line[4]})
 
-# TODO - this should be in the db module? import the db1.py and use the functionality in there.
+
 load_dotenv()
 host = os.environ.get("pg_host")
 user = os.environ.get("pg_user")
 password = os.environ.get("POSTGRES_PASSWORD")
 database = os.environ.get("pg_db")
 
-# TODO - this should be in the db.py module? and imported in?
+
 def run_db(sql):
     try:
         connection = psycopg2.connect(
@@ -37,7 +36,7 @@ def run_db(sql):
     finally:
         connection.close()
 
-#  TODO - this is duplicate code from another file? 
+
 def create_db():
     create_table = "CREATE DATABASE All_Orders"
     run_db(create_table)
@@ -56,7 +55,7 @@ def create_table():
     """
     run_db(create_clean_table)
 
-# TODO - you should be passing in the list as a parameter
+
 def update_db():
     for order in cafe50___25_08_2021___orders:
         sql = f"""INSERT INTO Orders 
