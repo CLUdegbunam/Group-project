@@ -23,7 +23,8 @@ zip -gr ../.deployment/lambda-package.zip app
 cd ..
 
 
-# aws s3 mb s3://gen-team5jack-deployment
+ #aws s3 mb s3://gen-team5jack-deployment
+ #aws s3 mb s3://team5jack-cafe-data --profile learner-profile --region eu-west-1
 
 # Package template and upload local resources (deployment package zip) to S3
 # A unique S3 filename is automatically generated each time

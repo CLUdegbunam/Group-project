@@ -1,3 +1,4 @@
+import logging
 import os
 import json
 
@@ -9,7 +10,13 @@ import csv
 import psycopg2
 #from dotenv import load_dotenv
 
+LOGGER = logging.getLogger()
+LOGGER.setLevel(logging.INFO) 
 
+
+
+# Do some transform
+#transfomer.transform_csv()
 
 order_id = 1
 
@@ -49,6 +56,26 @@ def get_ssm_parameters_under_path(path: str) -> dict:
     return formatted_response
 
 def lambda_handler(event, context):
+    LOGGER.info(event)
+
+    file_path = "/tmp/some_file.csv"
+
+    s3_event = event["Records"][0]["s3"]
+    bucket_name = s3_event["bucket"]["name"]
+    object_name = s3_event["object"]["key"] 
+
+    LOGGER.info(f"Triggered by file {object_name} in bucket {bucket_name}")
+
+    s3 = boto3.client("s3")
+    s3.download_file(bucket_name, object_name, file_path)
+
+    file = file_path
+
+
+    
+
+    #transfomer.transform_csv()
+
 
     creds = get_ssm_parameters_under_path("/team5/redshift")
     print(creds["user"])
@@ -56,6 +83,8 @@ def lambda_handler(event, context):
     print("Hello my name is Jack!")
     rows = run_db(sql1, creds)
     print(rows)
+
+    return file
 
 def run_db(sql, creds):
     try:
@@ -108,62 +137,65 @@ def run_db(sql, creds):
 
 # id = order_id
 
-# with open("chesterfield_25-08-2021_09-00-00.csv", "r") as csv_file:
-#     reader = csv.reader(csv_file)
-#     for line in reader:
-#         final_products = []
-#         test_for_products = []
-#         products = []
-#         test_for_products = line[3]
 
-#         if line[1] not in unique_branches:
-#             unique_branches.append(line[1])
+with open(file, "r") as csv_file:
+    reader = csv.reader(csv_file)
+    for line in reader:
+        final_products = []
+        test_for_products = []
+        products = []
+        test_for_products = line[3]
 
-#         if ', ' in test_for_products:
-#             test_for_products = line[3].split(', ')
+        if line[1] not in unique_branches:
+            unique_branches.append(line[1])
 
-#         x = 0
-#         for product in test_for_products:
-#             pricess = []
-#             if '- ' in product:
-#                 x =+ 1
-#                 products = product.rsplit(' - ', 1)
-#                 pricess.append(product.split(' - ', -2))
-#                 products.remove(products[-1])
+        if ', ' in test_for_products:
+            test_for_products = line[3].split(', ')
 
-#                 if products[0] not in unique_products:
-#                     unique_products.append(products[0])
-#                     prices.append(pricess[0][-1])
+        x = 0
+        for product in test_for_products:
+            pricess = []
+            if '- ' in product:
+                x =+ 1
+                products = product.rsplit(' - ', 1)
+                pricess.append(product.split(' - ', -2))
+                products.remove(products[-1])
 
-#                 final_products.append(products[0])
+                if products[0] not in unique_products:
+                    unique_products.append(products[0])
+                    prices.append(pricess[0][-1])
+
+                final_products.append(products[0])
                             
-#         for i in final_products:
-#             orders.append({"id" : order_id, "Date_Time" : line[0], "Branch" : unique_branches.index(line[1])+1, "Product_Name" : unique_products.index(i)+1, "Quantity" : 0, "Total_Price" : line[4]})
+        for i in final_products:
+            orders.append({"id" : order_id, "Date_Time" : line[0], "Branch" : unique_branches.index(line[1])+1, "Product_Name" : unique_products.index(i)+1, "Quantity" : 0, "Total_Price" : line[4]})
 
-#             product = i
-#             counter = 0
-#             for i in final_products:
-#                 if product == i:
-#                     counter += 1
-#             quantities.append(counter)
+            product = i
+            counter = 0
+            for i in final_products:
+                if product == i:
+                    counter += 1
+            quantities.append(counter)
 
-#         if x == 0:
-#             if '- ' in test_for_products:
-#                 products = test_for_products.rsplit(' - ', 1)
-#                 pricess.append(products[1])
-#                 products.remove(products[-1])
-#                 if products[0] not in unique_products:
-#                     unique_products.append(products[0])
-#                     prices.append(pricess[0])
+        if x == 0:
+            if '- ' in test_for_products:
+                products = test_for_products.rsplit(' - ', 1)
+                pricess.append(products[1])
+                products.remove(products[-1])
+                if products[0] not in unique_products:
+                    unique_products.append(products[0])
+                    prices.append(pricess[0])
 
-#                 final_products.append(products[0])
-#                 orders.append({"id" : order_id, "Date_Time" : line[0], "Branch" : unique_branches.index(line[1])+1, "Product_Name" : unique_products.index(products[0])+1, "Quantity" : 1, "Total_Price" : line[4]})
-#                 quantities.append(1)
+                final_products.append(products[0])
+                orders.append({"id" : order_id, "Date_Time" : line[0], "Branch" : unique_branches.index(line[1])+1, "Product_Name" : unique_products.index(products[0])+1, "Quantity" : 1, "Total_Price" : line[4]})
+                quantities.append(1)
 
-#         order_id += 1     
+        order_id += 1     
 
 # for y, z in enumerate(orders):
 #     count = quantities[y]
 #     z["Quantity"] = count
 
 # unique_orders = ([i for n, i in enumerate(orders) if i not in orders[n + 1:]])
+
+print(order_id)

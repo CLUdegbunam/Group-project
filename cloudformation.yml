@@ -26,8 +26,6 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
         - arn:aws:iam::aws:policy/AmazonSSMReadOnlyAccess
         - arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
-
-      #PermissionsBoundary: !Sub arn:aws:iam::aws:policy/service-role/AWSLambdaVPCAccessExecutionRole
       Policies:
       - PolicyName: LambdaLogsPolicy
         PolicyDocument:
@@ -44,12 +42,9 @@ Resources:
     Type: AWS::Lambda::Function
     Properties:
       FunctionName: !Sub ${NamePrefix}-etl-lambda
-   
-
       Runtime: python3.9
       Timeout: 50
       Handler: app.lambda_function.lambda_handler
-
       Role: !GetAtt LambdaFunctionRole.Arn
       Code: .deployment/lambda-package.zip
       VpcConfig:
@@ -59,23 +54,20 @@ Resources:
         SubnetIds:
           - Fn::ImportValue:
               !Sub 'network-infra-PrivateSubnet0ID'
-  
 
-
-
-  S3Bucket:
-    Type: 'AWS::S3::Bucket'
+  CafeDataBucket:
+    Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub ${NamePrefix}-cafe-data
-      # NotificationConfiguration:
-      #   LambdaConfigurations:
-      #     - Event: s3:ObjectCreated:*
-      #       Function: !GetAtt LambdaFunction.Arn
+      BucketName: team5-gen-cafe-data
+      NotificationConfiguration:
+        LambdaConfigurations:
+          - Event: s3:ObjectCreated:*
+            Function: !GetAtt LambdaFunction.Arn
 
-  # S3BucketPermission:
-  #   Type: AWS::Lambda::Permission
-  #   Properties: 
-  #     Action: lambda:InvokeFunction
-  #     FunctionName: !Ref LambdaFunction
-  #     Principal: s3.amazonaws.com
-  #     SourceArn: !GetAtt S3Bucket.Arn
+  S3BucketPermission:
+    Type: AWS::Lambda::Permission
+    Properties: 
+      Action: lambda:InvokeFunction
+      FunctionName: !Ref LambdaFunction
+      Principal: s3.amazonaws.com
+      SourceArn: "arn:aws:s3:::team5-gen-cafe-data"
