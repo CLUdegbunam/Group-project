@@ -9,7 +9,11 @@ deployment_bucket=gen-team5jack-deployment
 if [ -d ".deployment" ]; then rm -rf .deployment; fi
 
 # Pip install dependendies from requirements.txt to specific directory
-pip install --target ./.deployment/dependencies -r requirements.txt
+#pip install --target ./.deployment/dependencies -r requirements.txt
+
+
+#Use Docker Instead:
+docker run -v "$PWD":/var/task "public.ecr.aws/sam/build-python3.9" /bin/sh -c "pip install -r requirements.txt -t ./.deployment/dependencies; exit"
 # Zip all installed dependencies into a deployment package
 cd ./.deployment/dependencies
 zip -r ../lambda-package.zip .
