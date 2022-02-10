@@ -1,7 +1,7 @@
 import boto3
 import os
 import psycopg2
-
+from app.transform import transform_data
 
 def get_ssm_parameters_under_path(path: str) -> dict:
     ssm_client = boto3.client("ssm", region_name="eu-west-1")
@@ -14,9 +14,9 @@ def get_ssm_parameters_under_path(path: str) -> dict:
     return formatted_response
 
 def connect_to_redshift():  
-
     creds = get_ssm_parameters_under_path("/team5/redshift")
 
+    
 
 def run_db(sql, creds):
     try:
@@ -41,4 +41,57 @@ def run_db(sql, creds):
     finally:
         connection.close()
 
+# def insert_column_values_products(products123, price_for_product, items, run_db):    
     
+#     for prices, item in enumerate(products123):
+#         price = price_for_product[prices]
+#         price = float(price)
+        
+#         if item not in items:    
+#             sql = f"""
+#             INSERT INTO Products
+#             VALUES (
+#             DEFAULT, '{item}', {price}
+#             )
+#             ON CONFLICT DO NOTHING
+#             """
+#             items.append(item)
+#             run_db(sql)
+    
+# def insert_column_values_branches(Branchess, current_branches, run_db):
+#     for Branch in Branchess:
+#         if Branch not in current_branches:    
+#             sql = f"""
+#             INSERT INTO Branches(
+#             Branch_ID, Branch)
+#             VALUES
+#             (DEFAULT, '{Branch}')
+#             ON CONFLICT DO NOTHING
+#             """
+#             current_branches.append(Branch)
+#             run_db(sql)  
+# unique_orders = ([i for n, i in enumerate(orders) if i not in orders[n + 1:]])
+
+# def update_db(id):
+#     for i in unique_orders:
+#         counter = 0
+#         for i in unique_orders:
+#             if counter == 0 and i["id"] == id:
+#                 counter += 1
+        
+#                 sql = f"""
+#                 SET datestyle = dmy;
+#                 INSERT INTO Orders (
+#                 Order_ID, Date_Time, Branch_ID, Total_Price)
+#                 VALUES ({i["id"]}, '{i['Date_Time']}',
+#                 {i["Branch"]}, {i["Total_Price"]})"""
+#                 run_db(sql)
+#         id += 1
+
+#     for i in unique_orders:
+#         sql = f"""
+#         INSERT INTO Products_Ordered (
+#         Order_ID, Product_ID, Quantity)
+#         VALUES ({i["id"]}, {i["Product_Name"]},
+#         {i["Quantity"]})"""
+#         run_db(sql)
