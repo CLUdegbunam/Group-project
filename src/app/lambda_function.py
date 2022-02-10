@@ -3,7 +3,9 @@ import logging
 import app.extract as extract
 import boto3
 
-
+# import app.transform as transform
+from app.transform import load_from_db, transform_data, quantities_added
+from app.load import get_ssm_parameters_under_path
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO) 
@@ -23,8 +25,15 @@ def lambda_handler(event, context):
     s3 = boto3.client("s3")
     s3.download_file(bucket_name, object_name, file_path)
 
+    creds = get_ssm_parameters_under_path("/team5/redshift")
+
     data = extract.raw_data_extract(file_path)
     
     LOGGER.info(data[0])
+    
+    id, order_id, unique_products, unique_branches, existing_branches, items = load_from_db()
+    
+    orders, unique_products, unique_branches, prices, quantities = transform_data(id, order_id, unique_products, unique_branches, existing_branches, items)
 
-
+    unique_orders = quantities_added(orders, quantities)
+    LOGGER(f"First row is: {unique_orders[0]}")
