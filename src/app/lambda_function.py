@@ -5,7 +5,7 @@ import boto3
 
 # import app.transform as transform
 from app.transform import load_from_db, transform_data, quantities_added
-from app.load import get_ssm_parameters_under_path
+from app.load_db import get_ssm_parameters_under_path
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO) 
@@ -31,9 +31,11 @@ def lambda_handler(event, context):
     
     LOGGER.info(data[0])
     
-    id, order_id, unique_products, unique_branches, existing_branches, items = load_from_db()
+    id, order_id, unique_products, prices, unique_branches, existing_branches, items = load_from_db()
     
-    orders, unique_products, unique_branches, prices, quantities = transform_data(id, order_id, unique_products, unique_branches, existing_branches, items)
+    orders, unique_products, unique_branches, prices, quantities = transform_data(data, order_id, unique_branches, unique_products, prices)
 
     unique_orders = quantities_added(orders, quantities)
-    LOGGER(f"First row is: {unique_orders[0]}")
+
+    LOGGER(unique_orders[0])
+    #LOGGER(f"First row is: {unique_orders[0]}")

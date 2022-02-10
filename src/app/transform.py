@@ -1,8 +1,11 @@
-from app.extract import raw_data_extract as orders_from_csv
-from load import run_db
+#from app.extract import raw_data_extract #as orders_from_csv
+from app.load_db import run_db
 
 # orders_from_csv = [{'date': '25/09/2021 10:00', 'location': 'Brighton', 'customer': 'John Smith', 'products': 'Hamburger - 2.75, Large Fries - 2.30, Large Fries - 2.30, Large Fries - 2.30, Kebab - 6.00', 'total_cost': '5.05', 'pay_method': 'CARD', 'card_no': '5494173772652516'},
 # {'date': '25/09/2021 10:20', 'location': 'Brighton', 'customer': 'Michael Lewis', 'products': 'Steak - 7.30, Large Fries - 2.30', 'total_cost': '9.60', 'pay_method': 'CASH', 'card_no': ''}]
+
+#orders_from_csv = raw_data_extract 
+#print(orders_from_csv())
 
 
 def load_from_db():
@@ -43,7 +46,7 @@ def load_from_db():
     order_id = 1
     id = order_id
 
-    return id, order_id, unique_products, unique_branches, existing_branches, items
+    return id, order_id, unique_products, prices, unique_branches, existing_branches, items
 
 
 def transform_data(orders_from_csv, order_id, unique_branches, unique_products, prices):
@@ -115,21 +118,23 @@ def quantities_added(orders, quantities):
 
     return unique_orders
 
-order_id = load_from_db()[1]
+# order_id = load_from_db()[1]
 # id2 = load_from_db()[0]
 # print(order_id)
-unique_products = load_from_db()[2]
-unique_branches = load_from_db()[3]
-prices = load_from_db()[4]
+# unique_products = load_from_db()[2]
+# unique_branches = load_from_db()[4]
+# prices = load_from_db()[3]
 
-existing_branches = load_from_db()[6]
-items = load_from_db()[5]
+# existing_branches = load_from_db()[5]
+# items = load_from_db()[6]
 
-orders_test = transform_data(orders_from_csv, order_id, unique_branches)[0]
-quantities = transform_data(orders_from_csv, order_id)[4]
-unique_orders_test = quantities_added(orders_test, quantities)
-# print(orders_test)
-print(unique_orders_test)
+# orders_test_list = transform_data(orders_from_csv, order_id, unique_branches, unique_products, prices)
+
+# orders_test = orders_test_list[0]
+# quantities = transform_data(orders_from_csv, order_id, unique_branches, unique_products, prices)[4]
+# unique_orders_test = quantities_added(orders_test, quantities)
+# # print(orders_test)
+# print(unique_orders_test)
 
 
 
