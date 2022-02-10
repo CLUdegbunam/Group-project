@@ -1,8 +1,7 @@
 import boto3
 import os
 import psycopg2
-from app.transform import load_from_db, transform_data, quantities_added
-# import app.transform
+
 
 
 def get_ssm_parameters_under_path(path: str) -> dict:
@@ -18,7 +17,7 @@ def get_ssm_parameters_under_path(path: str) -> dict:
 # def connect_to_redshift():  
 #     creds = get_ssm_parameters_under_path("/team5/redshift")
 
-
+creds = get_ssm_parameters_under_path("/team5/redshift")
 def run_db(sql, creds):
     try:
         connection = psycopg2.connect(
@@ -42,7 +41,7 @@ def run_db(sql, creds):
     finally:
         connection.close()
 
-def insert_column_values_products(products123, price_for_product, items, run_db):    
+def insert_column_values_products(products123, price_for_product, items):    
     
     for prices, item in enumerate(products123):
         price = price_for_product[prices]
@@ -52,28 +51,27 @@ def insert_column_values_products(products123, price_for_product, items, run_db)
             sql = f"""
             INSERT INTO Products
             VALUES (
-            DEFAULT, '{item}', {price}
+            {products123.index(item)+1}, '{item}', {price}
             )
             ON CONFLICT DO NOTHING
             """
             items.append(item)
             run_db(sql, creds)
     
-def insert_column_values_branches(Branchess, current_branches, run_db):
+def insert_column_values_branches(Branchess, current_branches):
     for Branch in Branchess:
         if Branch not in current_branches:    
             sql = f"""
             INSERT INTO Branches(
             Branch_ID, Branch)
             VALUES
-            (DEFAULT, '{Branch}')
+            ({Branchess.index(Branch)+1}, '{Branch}')
             ON CONFLICT DO NOTHING
             """
             current_branches.append(Branch)
             run_db(sql, creds)  
-unique_orders = ([i for n, i in enumerate(orders) if i not in orders[n + 1:]])
 
-def update_db(id):
+def update_db(id, unique_orders):
     for i in unique_orders:
         counter = 0
         for i in unique_orders:

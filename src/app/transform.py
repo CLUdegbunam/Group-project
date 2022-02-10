@@ -1,5 +1,5 @@
 #from app.extract import raw_data_extract #as orders_from_csv
-from app.load_db import run_db
+from app.load import run_db
 
 # orders_from_csv = [{'date': '25/09/2021 10:00', 'location': 'Brighton', 'customer': 'John Smith', 'products': 'Hamburger - 2.75, Large Fries - 2.30, Large Fries - 2.30, Large Fries - 2.30, Kebab - 6.00', 'total_cost': '5.05', 'pay_method': 'CARD', 'card_no': '5494173772652516'},
 # {'date': '25/09/2021 10:20', 'location': 'Brighton', 'customer': 'Michael Lewis', 'products': 'Steak - 7.30, Large Fries - 2.30', 'total_cost': '9.60', 'pay_method': 'CASH', 'card_no': ''}]
