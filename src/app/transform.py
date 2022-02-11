@@ -8,7 +8,7 @@ from app.load import run_db
 #print(orders_from_csv())
 
 
-def load_from_db():
+def load_from_db(creds):
     try:
         unique_products = []
         prices = []
@@ -19,14 +19,14 @@ def load_from_db():
         items = []
 
         sql = "SELECT Branch FROM Branches"
-        a = run_db(sql)
+        a = run_db(sql, creds)
         for branch in a:
             if branch[0] not in unique_branches:
                 unique_branches.append(branch[0])
                 existing_branches.append(branch[0])
 
         sql = "SELECT Product_Name, Price FROM Products"
-        b = run_db(sql)
+        b = run_db(sql, creds)
         for item in b:
             if item[0] not in unique_products:
                 unique_products.append(item[0])
@@ -38,7 +38,7 @@ def load_from_db():
         sql = """SELECT Order_ID FROM Orders
                     ORDER BY Order_ID DESC"""
 
-        all_ids = run_db(sql)
+        all_ids = run_db(sql, creds)
         order_id = all_ids[0][0] + 1    
         order_id = 1
     except Exception:

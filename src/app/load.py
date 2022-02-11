@@ -14,10 +14,7 @@ def get_ssm_parameters_under_path(path: str) -> dict:
     formatted_response = {os.path.basename(x["Name"]):x["Value"] for x in response["Parameters"]}
     return formatted_response
 
-# def connect_to_redshift():  
-#     creds = get_ssm_parameters_under_path("/team5/redshift")
 
-creds = get_ssm_parameters_under_path("/team5/redshift")
 def run_db(sql, creds):
     try:
         connection = psycopg2.connect(
@@ -41,7 +38,7 @@ def run_db(sql, creds):
     finally:
         connection.close()
 
-def insert_column_values_products(products123, price_for_product, items):    
+def insert_column_values_products(products123, price_for_product, items, creds):    
     
     for prices, item in enumerate(products123):
         price = price_for_product[prices]
@@ -58,7 +55,7 @@ def insert_column_values_products(products123, price_for_product, items):
             items.append(item)
             run_db(sql, creds)
     
-def insert_column_values_branches(Branchess, current_branches):
+def insert_column_values_branches(Branchess, current_branches, creds):
     for Branch in Branchess:
         if Branch not in current_branches:    
             sql = f"""
@@ -71,7 +68,7 @@ def insert_column_values_branches(Branchess, current_branches):
             current_branches.append(Branch)
             run_db(sql, creds)  
 
-def update_db(id, unique_orders):
+def update_db(id, unique_orders, creds):
     for i in unique_orders:
         counter = 0
         for i in unique_orders:
