@@ -8,6 +8,8 @@ import boto3
 from app.transform import load_from_db, transform_data, quantities_added
 from app.load import get_ssm_parameters_under_path, insert_column_values_products, insert_column_values_branches, update_db
 
+from app.transform import remove_payment_details, index_branches, index_products, separating_orders, count_products_ordered
+from app.load import loading_branches, test_sql
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO) 
@@ -29,11 +31,45 @@ def lambda_handler(event, context):
 
     # creds = get_ssm_parameters_under_path("/team5/redshift")
 
+
+    ## EXTRACT THE DATA
+
     data = extract.raw_data_extract(file_path)
     
+    #print(data)
     #LOGGER.info(data[0])
 
+    ## TRANSFORM THE DATA
+
+    remove_payment_details(data)
+
+    #print(data)
+
+    branchdata = index_branches(data)
+
+    print(branchdata)
+
+
+    productsdata = index_products(data)
+
+    print(productsdata)
+ 
+    separatedorders = separating_orders(data)
+
+    print(separatedorders)
+
+    orders_counted_products = count_products_ordered(data)
+
+    print(orders_counted_products)
+
+
+
+    ## LOAD INTO AWS REDSHIFT
+
+
     creds = get_ssm_parameters_under_path("/team5/redshift")
+
+    print(creds)
 
     
     id, order_id, unique_products, prices, unique_branches, existing_branches, items = load_from_db(creds)
@@ -53,3 +89,8 @@ def lambda_handler(event, context):
 
     LOGGER.info(unique_branches)
     LOGGER.info(unique_products)
+
+
+    #loading_branches(branchdata, creds)
+
+    test_sql(creds)

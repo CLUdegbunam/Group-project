@@ -1,6 +1,7 @@
 import boto3
 import os
 import psycopg2
+from psycopg2.extras import execute_values
 
 
 
@@ -27,9 +28,7 @@ def run_db(sql, creds):
         connection.autocommit=True
         cursor = connection.cursor()
         cursor.execute(sql)
-        rows = cursor.fetchall()
-        if rows != None:
-            return rows
+        
         cursor.close()
     
     except Exception:
@@ -91,3 +90,19 @@ def update_db(id, unique_orders, creds):
         VALUES ({i["id"]}, {i["Product_Name"]},
         {i["Quantity"]})"""
         run_db(sql, creds)
+
+
+def loading_branches(data, creds):
+    #branches_data = index_branches(data)
+    for branch in data:
+        sql = f"""
+            INSERT INTO Branches(
+            branch_id, branch)
+            VALUES
+            ({branch["id"]}, '{branch["branch"]}')
+            """
+        run_db(sql, creds)    
+
+def test_sql(creds):
+    sql = "INSERT INTO branches(branch_id, branch) VALUES (123, 'Chelsea')"
+    run_db(sql, creds)
