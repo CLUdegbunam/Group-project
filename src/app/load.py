@@ -1,7 +1,13 @@
 import boto3
 import os
 import psycopg2
-from psycopg2.extras import execute_values
+from psycopg2.extras import execute_batch
+
+import logging
+
+
+LOGGER = logging.getLogger()
+LOGGER.setLevel(logging.INFO) 
 
 
 
@@ -16,7 +22,7 @@ def get_ssm_parameters_under_path(path: str) -> dict:
     return formatted_response
 
 
-def run_db(sql, creds):
+def run_db(sql, val, creds):
     try:
         connection = psycopg2.connect(
             host=creds["host"],
@@ -25,10 +31,13 @@ def run_db(sql, creds):
             database=creds["db"],
             port = creds["port"]
         )
+        LOGGER.info("Established redshift connection")
         connection.autocommit=True
         cursor = connection.cursor()
-        cursor.execute(sql)
-        
+
+
+        cursor.execute(sql, val)
+        #connection.commit()
         cursor.close()
     
     except Exception:
@@ -37,72 +46,116 @@ def run_db(sql, creds):
     finally:
         connection.close()
 
-def insert_column_values_products(products123, price_for_product, items, creds):    
-    
-    for prices, item in enumerate(products123):
-        price = price_for_product[prices]
-        price = float(price)
-        
-        if item not in items:    
-            sql = f"""
-            INSERT INTO Products
-            VALUES (
-            {products123.index(item)+1}, '{item}', {price}
-            )
-            ON CONFLICT DO NOTHING
-            """
-            items.append(item)
-            run_db(sql, creds)
-    
-def insert_column_values_branches(Branchess, current_branches, creds):
-    for Branch in Branchess:
-        if Branch not in current_branches:    
-            sql = f"""
-            INSERT INTO Branches(
-            Branch_ID, Branch)
-            VALUES
-            ({Branchess.index(Branch)+1}, '{Branch}')
-            ON CONFLICT DO NOTHING
-            """
-            current_branches.append(Branch)
-            run_db(sql, creds)  
 
-def update_db(id, unique_orders, creds):
-    for i in unique_orders:
-        counter = 0
-        for i in unique_orders:
-            if counter == 0 and i["id"] == id:
-                counter += 1
-        
-                sql = f"""
-                SET datestyle = dmy;
-                INSERT INTO Orders (
-                Order_ID, Date_Time, Branch_ID, Total_Price)
-                VALUES ({i["id"]}, '{i['Date_Time']}',
-                {i["Branch"]}, {i["Total_Price"]})"""
-                run_db(sql, creds)
-        id += 1
 
-    for i in unique_orders:
-        sql = f"""
-        INSERT INTO Products_Ordered (
-        Order_ID, Product_ID, Quantity)
-        VALUES ({i["id"]}, {i["Product_Name"]},
-        {i["Quantity"]})"""
-        run_db(sql, creds)
+def execute_multiple_db(statements: list[str], creds):
+    try:
+        connection = psycopg2.connect(
+            host=creds["host"],
+            user=creds["user"],
+            password=creds["password"],
+            database=creds["db"],
+            port = creds["port"]
+        )
+        LOGGER.info("Established redshift connection")
+        #connection.autocommit=True
+        cursor = connection.cursor()
+
+        for statement in statements:
+            cursor.execute(statement)
+        connection.commit()
+        cursor.close()
+    
+    except Exception as ex:
+        #database error
+        
+        LOGGER.error("Database error")
+        LOGGER.error(ex)
+        raise ex
+
+    finally:
+        connection.close()
+
+
+
+
+
+
+
+# def test_sql(creds):
+#     sql = "INSERT INTO branches(branch_id, branch) VALUES (123, 'Chelsea')"
+#     run_db(sql, creds)
+
+
 
 
 def loading_branches(data, creds):
-    #branches_data = index_branches(data)
-    for branch in data:
-        sql = f"""
-            INSERT INTO Branches(
-            branch_id, branch)
-            VALUES
-            ({branch["id"]}, '{branch["branch"]}')
-            """
-        run_db(sql, creds)    
+    LOGGER.info(f"Saving {len(data)} branches")
+    statements = []
+    for item in data:
+        branch_id = item['id']
+        branch = item['branch']
 
-def test_sql(creds):
-    sql = "INSERT INTO branches(branch_id, branch) VALUES (123, 'Chelsea')"
-    run_db(sql, creds)
+
+
+        sql = f"INSERT INTO branches (branch_id, branch) VALUES ({branch_id}, '{branch}')" 
+        statements.append(sql)
+        
+        LOGGER.info(sql)
+    
+    execute_multiple_db(statements, creds)
+
+
+def loading_products(data, creds):
+    LOGGER.info(f"Saving {len(data)} products")
+    statements = []
+    for item in data:
+        product_id = item['id']
+        product = item['product']
+        price = item['price']
+
+
+
+        sql = f"INSERT INTO products (product_id, product_name, price) VALUES ({product_id}, '{product}', {price})" 
+        statements.append(sql)
+        
+        LOGGER.info(sql)
+    
+    execute_multiple_db(statements, creds)
+
+def loading_orders(data, creds):
+    LOGGER.info(f"Saving {len(data)} ")
+    statements = ["SET datestyle = dmy"]
+    for item in data:
+        #{'order_id': '1533161305', 'date_time': '25/08/2021 09:00', 'branch_id': '2895903154', 'total_price': '5.2'}
+        order_id = item['order_id']
+        date_time = item['date_time']
+        branch_id = item['branch_id']
+        price = item['total_price']
+
+        
+
+        sql = f"INSERT INTO orders (order_id, date_time, branch_id, total_price) VALUES ({order_id}, '{date_time}', {branch_id} ,{price})" 
+        statements.append(sql)
+        
+        LOGGER.info(sql)
+    
+    execute_multiple_db(statements, creds)    
+
+def loading_order_quantities(data, creds):
+    LOGGER.info(f"Saving {len(data)} ")
+    statements = ["SET datestyle = dmy"]
+    for item in data:
+        
+        order_id = item['order_id']
+        product_id = item['product_id']
+        quantity = item['quantity']
+
+        
+
+        sql = f"INSERT INTO products_ordered (order_id, product_id, quantity) VALUES ({order_id}, {product_id}, {quantity})" 
+        statements.append(sql)
+        
+        LOGGER.info(sql)
+    
+    execute_multiple_db(statements, creds)   

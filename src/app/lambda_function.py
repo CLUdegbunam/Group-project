@@ -4,12 +4,11 @@ import logging
 import app.extract as extract
 import boto3
 
-# import app.transform as transform
-from app.transform import load_from_db, transform_data, quantities_added
-from app.load import get_ssm_parameters_under_path, insert_column_values_products, insert_column_values_branches, update_db
+from app.load import get_ssm_parameters_under_path
 
 from app.transform import remove_payment_details, index_branches, index_products, separating_orders, count_products_ordered
-from app.load import loading_branches, test_sql
+from app.load import loading_branches, loading_products, loading_orders, loading_order_quantities
+
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO) 
@@ -71,26 +70,14 @@ def lambda_handler(event, context):
 
     print(creds)
 
-    
-    id, order_id, unique_products, prices, unique_branches, existing_branches, items = load_from_db(creds)
-    
-    orders, unique_products, unique_branches, prices, quantities = transform_data(data, order_id, unique_branches, unique_products, prices)
+    loading_branches(branchdata, creds)
 
-    unique_orders = quantities_added(orders, quantities)
+    loading_products(productsdata, creds)
 
-    #LOGGER.info(unique_orders)
-    #LOGGER(f"First row is: {unique_orders[0]}")
+    loading_orders(separatedorders, creds)
 
-    insert_column_values_products(unique_products, prices, items, creds)
-    insert_column_values_branches(unique_branches, existing_branches, creds)
-    update_db(id, unique_orders, creds)
+    loading_order_quantities(orders_counted_products, creds)
 
+    #test_sql(creds)
 
-
-    LOGGER.info(unique_branches)
-    LOGGER.info(unique_products)
-
-
-    #loading_branches(branchdata, creds)
-
-    test_sql(creds)
+    LOGGER.info("Completed execution")
