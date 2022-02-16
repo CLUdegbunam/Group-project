@@ -101,7 +101,7 @@ def loading_branches(data, creds):
         sql = f"INSERT INTO branches (branch_id, branch) VALUES ({branch_id}, '{branch}')" 
         statements.append(sql)
         
-        LOGGER.info(sql)
+        #LOGGER.info(sql)
     
     execute_multiple_db(statements, creds)
 
@@ -119,7 +119,7 @@ def loading_products(data, creds):
         sql = f"INSERT INTO products (product_id, product_name, price) VALUES ({product_id}, '{product}', {price})" 
         statements.append(sql)
         
-        LOGGER.info(sql)
+        #LOGGER.info(sql)
     
     execute_multiple_db(statements, creds)
 
@@ -138,7 +138,7 @@ def loading_orders(data, creds):
         sql = f"INSERT INTO orders (order_id, date_time, branch_id, total_price) VALUES ({order_id}, '{date_time}', {branch_id} ,{price})" 
         statements.append(sql)
         
-        LOGGER.info(sql)
+        #LOGGER.info(sql)
     
     execute_multiple_db(statements, creds)    
 
@@ -156,6 +156,6 @@ def loading_order_quantities(data, creds):
         sql = f"INSERT INTO products_ordered (order_id, product_id, quantity) VALUES ({order_id}, {product_id}, {quantity})" 
         statements.append(sql)
         
-        LOGGER.info(sql)
+        #LOGGER.info(sql)
     
     execute_multiple_db(statements, creds)   
