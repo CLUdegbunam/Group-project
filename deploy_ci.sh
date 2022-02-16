@@ -9,7 +9,7 @@ deployment_bucket=gen-team5jack-deployment
 if [ -d ".deployment" ]; then rm -rf .deployment; fi
 
 # Pip install dependendies from requirements.txt to specific directory
-py -m pip install --target ./.deployment/dependencies -r requirements.txt
+python3 -m pip install --target ./.deployment/dependencies -r requirements.txt
 
 
 #Use Docker Instead:
