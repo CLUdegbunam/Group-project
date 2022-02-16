@@ -1,4 +1,3 @@
-from enum import unique
 import logging
 
 import app.extract as extract
