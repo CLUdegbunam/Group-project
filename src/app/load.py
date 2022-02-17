@@ -91,17 +91,18 @@ def execute_multiple_db(statements: list[str], creds):
 
 def loading_branches(data, creds):
     LOGGER.info(f"Saving {len(data)} branches")
-    statements = []
+    statements = ["CREATE TEMP TABLE branches_staging (LIKE branches);"]
     for item in data:
         branch_id = item['id']
         branch = item['branch']
 
 
 
-        sql = f"INSERT INTO branches (branch_id, branch) VALUES ({branch_id}, '{branch}')" 
+        sql = f"INSERT INTO branches_staging (branch_id, branch) VALUES ({branch_id}, '{branch}')" 
         statements.append(sql)
         
-        #LOGGER.info(sql)
+    sql = "DELETE FROM branches_staging USING branches WHERE branches_staging.branch_id = branches.branch_id"
+    statements.append(sql)
     
     execute_multiple_db(statements, creds)
 
