@@ -101,7 +101,8 @@ def loading_branches(data, creds):
         sql = f"INSERT INTO branches_staging (branch_id, branch) VALUES ({branch_id}, '{branch}')" 
         statements.append(sql)
         
-    sql = "DELETE FROM branches_staging USING branches WHERE branches_staging.branch_id = branches.branch_id"
+    sql = """DELETE FROM branches_staging USING branches WHERE branches_staging.branch_id = branches.branch_id;
+    INSERT INTO branches SELECT * FROM branches_staging"""
     statements.append(sql)
     
     execute_multiple_db(statements, creds)
@@ -120,7 +121,8 @@ def loading_products(data, creds):
         sql = f"INSERT INTO products_staging (product_id, product_name, price) VALUES ({product_id}, '{product}', {price})" 
         statements.append(sql)
         
-    sql = "DELETE FROM products_staging USING products WHERE products_staging.product_id = products.product_id"
+    sql = """DELETE FROM products_staging USING products WHERE products_staging.product_id = products.product_id;
+    INSERT INTO products SELECT * FROM products_staging"""
     statements.append(sql)
         
         #LOGGER.info(sql)
@@ -142,7 +144,8 @@ def loading_orders(data, creds):
         sql = f"INSERT INTO orders_staging (order_id, date_time, branch_id, total_price) VALUES ({order_id}, '{date_time}', {branch_id} ,{price})" 
         statements.append(sql)
         
-    sql = "DELETE FROM orders_staging USING orders WHERE orders_staging.order_id = orders.order_id"
+    sql = """DELETE FROM orders_staging USING orders WHERE orders_staging.order_id = orders.order_id;
+    INSERT INTO orders SELECT * FROM orders_staging"""
     statements.append(sql)
         
         #LOGGER.info(sql)
@@ -163,7 +166,8 @@ def loading_order_quantities(data, creds):
         sql = f"INSERT INTO products_ordered_staging (order_id, product_id, quantity) VALUES ({order_id}, {product_id}, {quantity})" 
         statements.append(sql)
         
-    sql = "DELETE FROM products_ordered_staging USING products_ordered WHERE products_ordered_staging.order_id = products_ordered.order_id"
+    sql = """DELETE FROM products_ordered_staging USING products_ordered WHERE products_ordered_staging.order_id = products_ordered.order_id;
+    INSERT INTO products_ordered SELECT * FROM products_ordered_staging"""
     statements.append(sql)
         
         #LOGGER.info(sql)
