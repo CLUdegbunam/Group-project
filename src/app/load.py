@@ -151,7 +151,7 @@ def loading_orders(data, creds):
 
 def loading_order_quantities(data, creds):
     LOGGER.info(f"Saving {len(data)} ")
-    statements = ["SET datestyle = dmy"]
+    statements = ["CREATE TEMP TABLE products_ordered_staging (LIKE products_ordered);"]
     for item in data:
         
         order_id = item['order_id']
@@ -160,8 +160,11 @@ def loading_order_quantities(data, creds):
 
         
 
-        sql = f"INSERT INTO products_ordered (order_id, product_id, quantity) VALUES ({order_id}, {product_id}, {quantity})" 
+        sql = f"INSERT INTO products_ordered_staging (order_id, product_id, quantity) VALUES ({order_id}, {product_id}, {quantity})" 
         statements.append(sql)
+        
+    sql = "DELETE FROM products_ordered_staging USING products_ordered WHERE products_ordered_staging.order_id = products_ordered.order_id"
+    statements.append(sql)
         
         #LOGGER.info(sql)
     
