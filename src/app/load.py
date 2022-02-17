@@ -117,7 +117,7 @@ def loading_products(data, creds):
 
 
 
-        sql = f"INSERT INTO products (product_id, product_name, price) VALUES ({product_id}, '{product}', {price})" 
+        sql = f"INSERT INTO products_staging (product_id, product_name, price) VALUES ({product_id}, '{product}', {price})" 
         statements.append(sql)
         
     sql = "DELETE FROM products_staging USING products WHERE products_staging.product_id = products.product_id"
@@ -139,7 +139,7 @@ def loading_orders(data, creds):
 
         
 
-        sql = f"INSERT INTO orders (order_id, date_time, branch_id, total_price) VALUES ({order_id}, '{date_time}', {branch_id} ,{price})" 
+        sql = f"INSERT INTO orders_staging (order_id, date_time, branch_id, total_price) VALUES ({order_id}, '{date_time}', {branch_id} ,{price})" 
         statements.append(sql)
         
     sql = "DELETE FROM orders_staging USING orders WHERE orders_staging.order_id = orders.order_id"
