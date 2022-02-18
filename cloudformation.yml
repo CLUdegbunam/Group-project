@@ -73,7 +73,6 @@ Resources:
       FunctionName: !Ref LambdaFunction
       Principal: s3.amazonaws.com
       SourceArn: "arn:aws:s3:::team5-gen-cafe-data"
-      SourceArn: "arn:aws:s3:::team5-transformed-cafe-data"
 
 
   LoadLambdaFunction:
