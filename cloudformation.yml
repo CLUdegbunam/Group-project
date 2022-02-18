@@ -59,7 +59,7 @@ Resources:
   LoadLambdaFunction:
     Type: AWS::Lambda::Function
     Properties:
-      FunctionName: team5-load_lambda
+      FunctionName: !Sub ${NamePrefix}-load-lambda
       Runtime: python3.9
       Timeout: 120
       ReservedConcurrentExecutions: 1
