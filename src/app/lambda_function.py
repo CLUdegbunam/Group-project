@@ -67,7 +67,7 @@ def lambda_handler(event, context):
 
     creds = get_ssm_parameters_under_path("/team5/redshift")
 
-    print(creds)
+    #print(creds)
 
     loading_branches(branchdata, creds)
 
@@ -80,3 +80,21 @@ def lambda_handler(event, context):
     #test_sql(creds)
 
     LOGGER.info("Completed execution")
+
+
+    def load_handler(event, context):
+        ## LOAD INTO AWS REDSHIFT
+
+
+        creds = get_ssm_parameters_under_path("/team5/redshift")
+
+        #print(creds)
+
+        loading_branches(branchdata, creds)
+
+        loading_products(productsdata, creds)
+
+        loading_orders(separatedorders, creds)
+
+        loading_order_quantities(orders_counted_products, creds)
+

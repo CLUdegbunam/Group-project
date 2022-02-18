@@ -56,6 +56,17 @@ Resources:
           - Fn::ImportValue:
               !Sub 'network-infra-PrivateSubnet0ID'
 
+  LoadLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: team5-load_lambda
+      Runtime: python3.9
+      Timeout: 120
+      ReservedConcurrentExecutions: 1
+      Handler: app.lambda_function.load_handler
+      Role: !GetAtt LambdaFunctionRole.Arn
+      Code: .deployment/lambda-package.zip
+
   CafeDataBucket:
     Type: AWS::S3::Bucket
     Properties:
@@ -64,6 +75,15 @@ Resources:
         LambdaConfigurations:
           - Event: s3:ObjectCreated:*
             Function: !GetAtt LambdaFunction.Arn
+  
+  CafeTransformedDataBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: team5-transformed-cafe-data
+      # NotificationConfiguration:
+      #   LambdaConfigurations:
+      #     - Event: s3:ObjectCreated:*
+      #       Function: !GetAtt LambdaFunction.Arn
 
   S3BucketPermission:
     Type: AWS::Lambda::Permission
