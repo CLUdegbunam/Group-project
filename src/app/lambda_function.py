@@ -1,7 +1,9 @@
 import logging
-
+import os
+import csv
 import app.extract as extract
 import boto3
+import json
 
 from app.load import get_ssm_parameters_under_path
 
@@ -61,24 +63,65 @@ def lambda_handler(event, context):
     print(orders_counted_products)
 
 
+    base_filename = os.path.splitext(object_name)[0]
+
+    sqs = boto3.client('sqs')
+
+    send_file(s3, sqs, branchdata, "branches", base_filename + "_branches.csv")
+    send_file(s3, sqs, productsdata, "products", base_filename + "_products.csv")
+    send_file(s3, sqs, separatedorders, "orders", base_filename + "_orders.csv")
+    send_file(s3, sqs, orders_counted_products, "products_ordered", base_filename + "_products_ordered.csv")
+
+    
+def send_file(s3, sqs, data_set, data_type: str, bucket_key: str):
+    write_csv("/tmp/output.csv", data_set)
+    LOGGER.info(f"Wrote local CSV for: {data_set}")
+
+    bucket_name = "team5-transformed-cafe-data"
+    s3.upload_file("/tmp/output.csv", bucket_name, bucket_key)
+    LOGGER.info(f"Uploading to S3 into bucket {bucket_name} with key {bucket_key}")
+
+    message = {
+        "bucket_name" : bucket_name,
+        "bucket_key" : bucket_key,
+        "data_type" : data_type
+    }
+    
+    sqs.send_message(
+        QueueUrl='https://sqs.eu-west-1.amazonaws.com/123980920791/team5jack-load-queue',
+        MessageBody=json.dumps(message)
+    )
+
+
+
+def write_csv(filename: str, data: list[dict[str, str]]):
+    with open(filename, 'w') as csv_file:
+        dict_writer = csv.DictWriter(csv_file, fieldnames=data[0].keys())
+        dict_writer.writeheader()
+        dict_writer.writerows(data)
+
+
+
+
+
 
     ## LOAD INTO AWS REDSHIFT
 
 
-    creds = get_ssm_parameters_under_path("/team5/redshift")
+    # creds = get_ssm_parameters_under_path("/team5/redshift")
 
-    #print(creds)
+    # #print(creds)
 
-    loading_branches(branchdata, creds)
+    # loading_branches(branchdata, creds)
 
-    loading_products(productsdata, creds)
+    # loading_products(productsdata, creds)
 
-    loading_orders(separatedorders, creds)
+    # loading_orders(separatedorders, creds)
 
-    loading_order_quantities(orders_counted_products, creds)
+    # loading_order_quantities(orders_counted_products, creds)
 
-    #test_sql(creds)
+    # #test_sql(creds)
 
-    LOGGER.info("Completed execution")
+    # LOGGER.info("Completed execution")
 
     #return branchdata,productsdata,separatedorders,orders_counted_products
