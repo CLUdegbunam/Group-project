@@ -91,24 +91,26 @@ def execute_multiple_db(statements: list[str], creds):
 
 def loading_branches(data, creds):
     LOGGER.info(f"Saving {len(data)} branches")
-    statements = []
+    statements = ["CREATE TEMP TABLE branches_staging (LIKE branches);"]
     for item in data:
         branch_id = item['id']
         branch = item['branch']
 
 
 
-        sql = f"INSERT INTO branches (branch_id, branch) VALUES ({branch_id}, '{branch}')" 
+        sql = f"INSERT INTO branches_staging (branch_id, branch) VALUES ({branch_id}, '{branch}')" 
         statements.append(sql)
         
-        #LOGGER.info(sql)
+    sql = """DELETE FROM branches_staging USING branches WHERE branches_staging.branch_id = branches.branch_id;
+    INSERT INTO branches SELECT * FROM branches_staging"""
+    statements.append(sql)
     
     execute_multiple_db(statements, creds)
 
 
 def loading_products(data, creds):
     LOGGER.info(f"Saving {len(data)} products")
-    statements = []
+    statements = ["CREATE TEMP TABLE products_staging (LIKE products);"]
     for item in data:
         product_id = item['id']
         product = item['product']
@@ -116,8 +118,12 @@ def loading_products(data, creds):
 
 
 
-        sql = f"INSERT INTO products (product_id, product_name, price) VALUES ({product_id}, '{product}', {price})" 
+        sql = f"INSERT INTO products_staging (product_id, product_name, price) VALUES ({product_id}, '{product}', {price})" 
         statements.append(sql)
+        
+    sql = """DELETE FROM products_staging USING products WHERE products_staging.product_id = products.product_id;
+    INSERT INTO products SELECT * FROM products_staging"""
+    statements.append(sql)
         
         #LOGGER.info(sql)
     
@@ -125,7 +131,7 @@ def loading_products(data, creds):
 
 def loading_orders(data, creds):
     LOGGER.info(f"Saving {len(data)} ")
-    statements = ["SET datestyle = dmy"]
+    statements = ["CREATE TEMP TABLE orders_staging (LIKE orders);", "SET datestyle = dmy"]
     for item in data:
         #{'order_id': '1533161305', 'date_time': '25/08/2021 09:00', 'branch_id': '2895903154', 'total_price': '5.2'}
         order_id = item['order_id']
@@ -135,8 +141,12 @@ def loading_orders(data, creds):
 
         
 
-        sql = f"INSERT INTO orders (order_id, date_time, branch_id, total_price) VALUES ({order_id}, '{date_time}', {branch_id} ,{price})" 
+        sql = f"INSERT INTO orders_staging (order_id, date_time, branch_id, total_price) VALUES ({order_id}, '{date_time}', {branch_id} ,{price})" 
         statements.append(sql)
+        
+    sql = """DELETE FROM orders_staging USING orders WHERE orders_staging.order_id = orders.order_id;
+    INSERT INTO orders SELECT * FROM orders_staging"""
+    statements.append(sql)
         
         #LOGGER.info(sql)
     
@@ -144,7 +154,7 @@ def loading_orders(data, creds):
 
 def loading_order_quantities(data, creds):
     LOGGER.info(f"Saving {len(data)} ")
-    statements = ["SET datestyle = dmy"]
+    statements = ["CREATE TEMP TABLE products_ordered_staging (LIKE products_ordered);"]
     for item in data:
         
         order_id = item['order_id']
@@ -153,8 +163,12 @@ def loading_order_quantities(data, creds):
 
         
 
-        sql = f"INSERT INTO products_ordered (order_id, product_id, quantity) VALUES ({order_id}, {product_id}, {quantity})" 
+        sql = f"INSERT INTO products_ordered_staging (order_id, product_id, quantity) VALUES ({order_id}, {product_id}, {quantity})" 
         statements.append(sql)
+        
+    sql = """DELETE FROM products_ordered_staging USING products_ordered WHERE products_ordered_staging.order_id = products_ordered.order_id;
+    INSERT INTO products_ordered SELECT * FROM products_ordered_staging"""
+    statements.append(sql)
         
         #LOGGER.info(sql)
     
