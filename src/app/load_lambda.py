@@ -11,10 +11,11 @@ def load_handler(event, context):
 
     creds = get_ssm_parameters_under_path("/team5/redshift")
     # LOGGER.info(creds)
-    LOGGER.info(event)
+    # LOGGER.info(event)
     file_path = "/tmp/some_file.csv"
 
     s3_event = event["Records"][0]["body"]
+    LOGGER.info(type(s3_event))
     LOGGER.info(s3_event)
     bucket_name = s3_event["bucket_name"]
     object_name = s3_event["bucket_key"]
