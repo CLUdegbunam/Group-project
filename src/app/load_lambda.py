@@ -10,8 +10,8 @@ def load_handler(event, context):
     ## LOAD INTO AWS REDSHIFT
 
     creds = get_ssm_parameters_under_path("/team5/redshift")
-    LOGGER.info(creds)
-
+    # LOGGER.info(creds)
+    LOGGER.info(event)
     file_path = "/tmp/some_file.csv"
 
     s3_event = event["Records"][0]["s3"]
