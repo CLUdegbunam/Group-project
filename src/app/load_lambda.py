@@ -14,7 +14,7 @@ def load_handler(event, context):
     LOGGER.info(event)
     file_path = "/tmp/some_file.csv"
 
-    s3_event = event["Records"][0]["s3"]
+    s3_event = event["Records"][0]["body"]
     bucket_name = s3_event["bucket"]["name"]
     object_name = s3_event["object"]["key"] 
 
