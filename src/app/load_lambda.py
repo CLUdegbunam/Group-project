@@ -29,11 +29,13 @@ def load_handler(event, context):
     s3.download_file(bucket_name, object_name, file_path)
 
     def load_csv_file(file_path):
+        data = []
         with open(file_path) as csv_file:
             reader = csv.DictReader(csv_file)
             LOGGER.info(reader)
-            return reader
-        # for line in reader:
+        for line in reader:
+            data.append(line)
+        return data
 
     data = load_csv_file(file_path)
 
