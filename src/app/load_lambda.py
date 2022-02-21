@@ -32,9 +32,8 @@ def load_handler(event, context):
         data = []
         with open(file_path) as csv_file:
             reader = csv.DictReader(csv_file)
-            LOGGER.info(reader)
-        for line in reader:
-            data.append(line)
+            for line in reader:
+                data.append(line)
         return data
 
     data = load_csv_file(file_path)
