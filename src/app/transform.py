@@ -85,7 +85,7 @@ def separating_orders(data):
         date_time = item['date']
         branch_id = hash(item['location'])
         total_price = item['total_cost']
-        LOGGER.info(item)
+        # LOGGER.info(item)
         method = item['pay_method']
 
         new_item = {"order_id" : order_id, "date_time": date_time, "branch_id": branch_id, "total_price": total_price, "method": method}

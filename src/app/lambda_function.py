@@ -37,7 +37,7 @@ def lambda_handler(event, context):
     data = extract.raw_data_extract(file_path)
     
     #print(data)
-    LOGGER.info(data[0])
+    # LOGGER.info(data[0])
 
     ## TRANSFORM THE DATA
 
@@ -67,7 +67,7 @@ def lambda_handler(event, context):
 
     sqs = boto3.client('sqs')
 
-    # send_file(s3, sqs, branchdata, "branches", base_filename + "_branches.csv")
+    send_file(s3, sqs, branchdata, "branches", base_filename + "_branches.csv")
     send_file(s3, sqs, productsdata, "products", base_filename + "_products.csv")
     send_file(s3, sqs, separatedorders, "orders", base_filename + "_orders.csv")
     send_file(s3, sqs, orders_counted_products, "products_ordered", base_filename + "_products_ordered.csv")
