@@ -2,6 +2,7 @@ import logging
 from app.load import get_ssm_parameters_under_path, loading_branches, loading_products, loading_orders, loading_order_quantities
 import boto3
 import csv
+import json
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO) 
@@ -15,9 +16,11 @@ def load_handler(event, context):
     file_path = "/tmp/some_file.csv"
 
     s3_event = event["Records"][0]["body"]
-    LOGGER.info(type(s3_event))
+
     LOGGER.info(s3_event)
-    LOGGER.info(s3_event[0])
+    json.loads(s3_event)
+    LOGGER.info(type(s3_event))
+
     bucket_name = s3_event["bucket_name"]
     object_name = s3_event["bucket_key"]
     file_type = s3_event["data_type"]
