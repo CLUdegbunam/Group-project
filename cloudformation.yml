@@ -48,14 +48,7 @@ Resources:
       Handler: app.lambda_function.lambda_handler
       Role: !GetAtt LambdaFunctionRole.Arn
       Code: .deployment/lambda-package.zip
-      VpcConfig:
-        SecurityGroupIds:
-          - Fn::ImportValue:
-              'network-infra-VPCSGID'
-        SubnetIds:
-          - Fn::ImportValue:
-              !Sub 'network-infra-PrivateSubnet0ID'
-
+      
 
   CafeDataBucket:
     Type: AWS::S3::Bucket
