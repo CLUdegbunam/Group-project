@@ -38,17 +38,19 @@ def load_handler(event, context):
 
     data = load_csv_file(file_path)
 
-    LOGGER.info(data)
 
+    if file_type == 'branches':
+        LOGGER.info(data)
+        loading_branches(data, creds)
 
-    # if '_branches' in object_name:
-    #     loading_branches(data, creds)
+    if file_type == 'products':
+        LOGGER.info(data)
+        loading_products(data, creds)
 
-    # if '_products' in object_name:
-    #     loading_products(data, creds)
+    if file_type == 'orders':
+        LOGGER.info(data)
+        loading_orders(data, creds)
 
-    # if '_orders' in object_name:
-    #     loading_orders(data, creds)
-
-    # if '_products_ordered' in object_name:
-    #     loading_order_quantities(data, creds)
+    if file_type == 'products_ordered':
+        LOGGER.info(data)
+        loading_order_quantities(data, creds)
