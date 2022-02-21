@@ -37,7 +37,7 @@ def lambda_handler(event, context):
     data = extract.raw_data_extract(file_path)
     
     #print(data)
-    #LOGGER.info(data[0])
+    LOGGER.info(data[0])
 
     ## TRANSFORM THE DATA
 
