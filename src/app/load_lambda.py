@@ -18,7 +18,7 @@ def load_handler(event, context):
     s3_event = event["Records"][0]["body"]
 
     LOGGER.info(s3_event)
-    json.loads(s3_event)
+    s3_event = json.loads(s3_event)
     LOGGER.info(type(s3_event))
 
     bucket_name = s3_event["bucket_name"]
