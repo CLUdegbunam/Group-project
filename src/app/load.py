@@ -139,6 +139,7 @@ def loading_orders(data, creds):
         branch_id = item['branch_id']
         price = item['total_price']
         payment_method = item['method']
+        LOGGER.info(item['method'])
 
 
         
