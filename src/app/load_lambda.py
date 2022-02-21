@@ -1,25 +1,47 @@
 import logging
-
-import app.extract as extract
+from app.load import get_ssm_parameters_under_path, loading_branches, loading_products, loading_orders, loading_order_quantities
 import boto3
+import csv
 
 LOGGER = logging.getLogger()
 LOGGER.setLevel(logging.INFO) 
 
 def load_handler(event, context):
     ## LOAD INTO AWS REDSHIFT
-    
-    pass
-    # creds = get_ssm_parameters_under_path("/team5/redshift")
 
-    # #print(creds)
-    # branchdata,productsdata,separatedorders,orders_counted_products = lambda_handler(event, context)
+    creds = get_ssm_parameters_under_path("/team5/redshift")
+    LOGGER.info(creds)
+
+    file_path = "/tmp/some_file.csv"
+
+    s3_event = event["Records"][0]["s3"]
+    bucket_name = s3_event["bucket"]["name"]
+    object_name = s3_event["object"]["key"] 
 
 
-    # loading_branches(branchdata, creds)
+    s3 = boto3.client("s3")
+    s3.download_file(bucket_name, object_name, file_path)
 
-    # loading_products(productsdata, creds)
+    def load_csv_file(file_path):
+        with open(file_path) as csv_file:
+            reader = csv.DictReader(csv_file)
+            LOGGER.info(reader)
+            return reader
+        # for line in reader:
 
-    # loading_orders(separatedorders, creds)
+    data = load_csv_file(file_path)
 
-    # loading_order_quantities(orders_counted_products, creds)
+    LOGGER.info(data[0])
+
+
+    # if '_branches' in object_name:
+    #     loading_branches(data, creds)
+
+    # if '_products' in object_name:
+    #     loading_products(data, creds)
+
+    # if '_orders' in object_name:
+    #     loading_orders(data, creds)
+
+    # if '_products_ordered' in object_name:
+    #     loading_order_quantities(data, creds)
