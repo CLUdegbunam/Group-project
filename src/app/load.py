@@ -78,10 +78,6 @@ def execute_multiple_db(statements: list[str], creds):
 
 
 
-
-
-
-
 # def test_sql(creds):
 #     sql = "INSERT INTO branches(branch_id, branch) VALUES (123, 'Chelsea')"
 #     run_db(sql, creds)
@@ -139,9 +135,6 @@ def loading_orders(data, creds):
         branch_id = item['branch_id']
         price = item['total_price']
         payment_method = item['method']
-        LOGGER.info(item['method'])
-
-
         
 
         sql = f"INSERT INTO orders_staging (order_id, date_time, branch_id, total_price, payment_method) VALUES ({order_id}, '{date_time}', {branch_id} ,{price}, '{payment_method}')" 
