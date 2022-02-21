@@ -41,12 +41,12 @@ def lambda_handler(event, context):
 
     ## TRANSFORM THE DATA
 
-    remove_payment_details(data)
+    # remove_payment_details(data)
 
     #print(data)
 
     branchdata = index_branches(data)
-
+    LOGGER.info(data[0])
     print(branchdata)
 
 
