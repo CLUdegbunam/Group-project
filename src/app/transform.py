@@ -13,6 +13,18 @@ def remove_payment_details(data):
 
     return data 
 
+#Extract payment details
+def extract_payment_method(data):
+    payments_data = []
+    for item in data:
+        order_id = hash(item['customer'])
+        method = item['pay_method']
+
+        payment_dict = {"id": order_id, "pay_method": method}
+        payments_data.append(payment_dict)
+
+    return payments_data    
+
 #index the branches of the fast food outlet
 def index_branches(data):
     branches = []
@@ -69,8 +81,9 @@ def separating_orders(data):
         date_time = item['date']
         branch_id = hash(item['location'])
         total_price = item['total_cost']
+        method = item['pay_method']
 
-        new_item = {"order_id" : order_id, "date_time": date_time, "branch_id": branch_id, "total_price": total_price}
+        new_item = {"order_id" : order_id, "date_time": date_time, "branch_id": branch_id, "total_price": total_price, "method": method}
 
         cleaned_orders.append(new_item)
 

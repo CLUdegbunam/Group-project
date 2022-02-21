@@ -138,10 +138,12 @@ def loading_orders(data, creds):
         date_time = item['date_time']
         branch_id = item['branch_id']
         price = item['total_price']
+        payment_method = item['method']
+
 
         
 
-        sql = f"INSERT INTO orders_staging (order_id, date_time, branch_id, total_price) VALUES ({order_id}, '{date_time}', {branch_id} ,{price})" 
+        sql = f"INSERT INTO orders_staging (order_id, date_time, branch_id, total_price, payment_method) VALUES ({order_id}, '{date_time}', {branch_id} ,{price}, {payment_method})" 
         statements.append(sql)
         
     sql = """DELETE FROM orders_staging USING orders WHERE orders_staging.order_id = orders.order_id;
