@@ -15,6 +15,7 @@ def load_handler(event, context):
     file_path = "/tmp/some_file.csv"
 
     s3_event = event["Records"][0]["body"]
+    LOGGER.info(s3_event)
     bucket_name = s3_event["bucket_name"]
     object_name = s3_event["bucket_key"]
     file_type = s3_event["data_type"]
