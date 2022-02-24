@@ -28,6 +28,7 @@ def load_handler(event, context):
     s3 = boto3.client("s3")
     s3.download_file(bucket_name, object_name, file_path)
 
+    # TODO - why is this an inner function? 
     def load_csv_file(file_path):
         data = []
         with open(file_path) as csv_file:
@@ -38,7 +39,7 @@ def load_handler(event, context):
 
     data = load_csv_file(file_path)
 
-
+    # TODO consider using an elif with the final else logging that the file type is not implemented. THis will help if anything changes.
     if file_type == 'branches':
         LOGGER.info(data)
         loading_branches(data, creds)

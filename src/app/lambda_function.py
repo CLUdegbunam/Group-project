@@ -35,7 +35,9 @@ def lambda_handler(event, context):
    
 
     branchdata = index_branches(data)
+    # TODO - make this log information more useful? maybe inform of the amount of orders you will process? 
     LOGGER.info(data[0])
+    # TODO - remove print statements
     print(branchdata)
 
 
@@ -65,7 +67,7 @@ def lambda_handler(event, context):
 def send_file(s3, sqs, data_set, data_type: str, bucket_key: str):
     write_csv("/tmp/output.csv", data_set)
     LOGGER.info(f"Wrote local CSV for: {data_set}")
-
+    # TODO - pass this in as an environment variable rather than hard coding
     bucket_name = "team5-transformed-cafe-data"
     s3.upload_file("/tmp/output.csv", bucket_name, bucket_key)
     LOGGER.info(f"Uploading to S3 into bucket {bucket_name} with key {bucket_key}")
@@ -75,7 +77,7 @@ def send_file(s3, sqs, data_set, data_type: str, bucket_key: str):
         "bucket_key" : bucket_key,
         "data_type" : data_type
     }
-    
+    # TODO - pass the QueueURL value in as an environment variable rather than hard coding
     sqs.send_message(
         QueueUrl='https://sqs.eu-west-1.amazonaws.com/123980920791/team5jack-load-queue',
         MessageBody=json.dumps(message)

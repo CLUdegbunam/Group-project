@@ -8,6 +8,7 @@ LOGGER.setLevel(logging.INFO)
 def hash(s: str) -> str:
         return str(int(sha256(s.encode('utf-8')).hexdigest(), 16))[:10]
 
+#TODO - this could have been done at the extraction stage. but there is no harm having it here.
 #remove payment details from data
 def remove_payment_details(data):
     for item in data:
@@ -17,6 +18,7 @@ def remove_payment_details(data):
 
     return data 
 
+# TODO - is this function used? 
 #Extract payment details
 def extract_payment_method(data):
     payments_data = []
@@ -56,7 +58,7 @@ def index_products(data):
         for sublist in products:
             for element in sublist:
                 flatproducts.append(element)
-
+        # why have you put the set back into a list? you can iterate through a set.
         uniqueProducts = set(flatproducts)
         uniqueProducts = list(uniqueProducts)   
 
@@ -70,7 +72,7 @@ def index_products(data):
             productdict['price'] = val[1]
             #print(productdict)
             result.append(productdict)
-            
+            # TODO - clear up whitespace. 
    
        
     return result
@@ -78,6 +80,8 @@ def index_products(data):
         
 
 #create data for orders table
+# TODO - you are hashing the branch id, but you have also generated it in the function index_branches 
+# TODO - consider passing in the branch data and using the same ID. 
 def separating_orders(data):
     cleaned_orders = []
     for item in data:
@@ -94,11 +98,12 @@ def separating_orders(data):
 
     return cleaned_orders    
 
-
+# TODO - you are rehashing ID's which would cause code smell if the algorithm for hashing changed in the index_products function.
+# TODO - consider using the data sets you have generated earlier to produce this result instead. 
 def count_products_ordered(data):
     custinfo = []
     for item in data:
-        
+        # TODO remove the whitespaces. 
       
         order_id = hash(item['customer'])
         product = item['products']    
