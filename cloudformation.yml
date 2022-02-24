@@ -110,3 +110,12 @@ Resources:
       QueueName: !Sub ${NamePrefix}-load-queue
       DelaySeconds: 0
       VisibilityTimeout: 120
+      RedrivePolicy: 
+        deadLetterTargetArn: !GetAtt LoadDeadLetterQueue.Arn
+        maxReceiveCount: 1
+
+  LoadDeadLetterQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Sub ${NamePrefix}-load-queue-dlq
+
