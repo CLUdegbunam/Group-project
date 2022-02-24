@@ -2,11 +2,8 @@ import csv
 from msilib.schema import Class
 from hashlib import sha256
 from src.app.extract import raw_data_extract
-from src.app.transform import remove_payment_details, extract_payment_method, index_branches
+from src.app.transform import remove_payment_details, extract_payment_method, index_branches, hash
 from src.app.transform import separating_orders, count_products_ordered, index_products
-
-def hash(s: str) -> str:
-    return str(int(sha256(s.encode('utf-8')).hexdigest(), 16))[:10]
 
 #EXTRACT UNIT TEST
 # extract data
