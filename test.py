@@ -16,7 +16,6 @@ def test_raw_data_extract():
 #ACTUAL
     try:
         result = raw_data_extract("extra_data.csv")
-        print(result)
 # ASSERT
         assert expected == result
     except FileNotFoundError as fnfd:
@@ -25,20 +24,19 @@ def test_raw_data_extract():
         print("Something went wrong" + str(e))
     return result
 
-#TRANSFORM UNIT TEST
+# TRANSFORM UNIT TEST
 # remove payment details from data
 def test_remove_payment_details():
 #ARRANGE
-    expected = [{'date': '25/09/2021 10:00', 'location': 'Brighton', 'customer': 'John Smith', 'products': 'Hamburger - 2.75, Large Fries - 2.30', 'total_cost': '5.05', 'pay_method': 'CARD', 'card_no': '5494177586996740'}]
+    expected = [{'date': '25/09/2021 10:00', 'location': 'Brighton', 'customer': 'John Smith', 'products': 'Hamburger - 2.75, Large Fries - 2.30', 'total_cost': '5.05'}]
     new_data =  []
 #ACTUAL
     try:
         result = raw_data_extract("extra_data.csv")
-        remove_payment_details(result)
+        result = remove_payment_details(result)
         new_data.append(result)
-        print(result)
 # ASSERT
-        assert expected == new_data
+        assert expected == result
     except FileNotFoundError as fnfd:
         print("File not found" + str(fnfd))
     except Exception as e:
@@ -73,7 +71,7 @@ test_index_branches()
 # index for products
 def test_index_products():
 #ARRANGE
-    expected = [{'id': '7192174250', 'product': 'Mash Potato', 'price': '2.30'}, {'id': '1784391626', 'product': 'Chapatti', 'price': '5.75'}]
+    expected = [{'id': '1784391626', 'product': 'Chapatti', 'price': '5.75'}, {'id': '7192174250', 'product': 'Mash Potato', 'price': '2.30'}]
 #ACTUAL
     raw_data = [{'date': '25/09/2021 09:20', 'location': 'Cornwall', 'customer': 'Lewis Hamilton', 'products': 'Chapatti - 5.75, Mash Potato - 2.30', 'total_cost': '8.05', 'pay_method': 'CASH'}]
     result = index_products(raw_data)
